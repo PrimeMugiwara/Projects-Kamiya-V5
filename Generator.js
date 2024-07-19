@@ -5990,11 +5990,150 @@ participant: m.quoted.sender
 })
 }
 break
+		
+//╼━══════════⪨ Ai ⪩══════════━╾\\
+case'metaai': {
+var contact = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+"contactMessage": {
+"displayName": Al Villainess
+"vcard": "BEGIN:VCARD\nVERSION:3.0\nN:Projects;Kamiya;;;\nFN:Exclusive\nTEL;type=Mobile;waid=13135550002:+62 838-2910-2407\nEND:VCARD",
+}
+}), { userJid: m.chat, quoted: m })
+MappleCore.relayMessage(m.chat, contact.message, { messageId: contact.key.id })
+break
+
+
+case 'kamiya': {
+  if (!text) return kamiyareply(Hai! Aku Kamiya-chan! Senang bertemu denganmu~ Apa yang ingin kamu ceritakan atau tanyakan hari ini? Aku siap mendengarkan dan membantu dengan apapun yang kamu butuhkan! 😉);
+
+  function checkText(text) {
+    const lowerCaseText = text.toLowerCase();
+    if (lowerCaseText.includes('cariin') || lowerCaseText.includes('carikan') || lowerCaseText.includes('putarin') || lowerCaseText.includes('putarkan')) {
+      return 'ok';
+    } else {
+      return 'no';
+    }
+  }
+
+  if (text.includes('group') && text.includes('tutup')) {
+    if (!isBotAdmins) return kamiyareply(Maaf, hanya admin yang bisa menggunakan perintah ini. 😔);
+        if (!isAdmins) return kamiyareply(Maaf, hanya admin yang bisa menggunakan perintah ini. 😔);
+    
+    await MappleCore.groupSettingUpdate(m.chat, 'announcement')
+    kamiyareply(Oke, grup telah ditutup. Semoga lebih teratur ya~ 😉);
+  } else if (text.includes('group') && text.includes('buka')) {
+if (!isBotAdmins) return kamiyareply(Maaf, hanya admin yang bisa menggunakan perintah ini. 😔);
+        if (!isAdmins) return kamiyareply(Maaf, hanya admin yang bisa menggunakan perintah ini. 😔);
+    
+    await MappleCore.groupSettingUpdate(m.chat, 'not_announcement')
+    kamiyareply(Oke, grup telah dibuka. Ayo kita beraktivitas bersama-sama! 😉);
+  } else if (text.includes('kick') || text.includes('kik')) {
+  if (!isBotAdmins) return kamiyareply(Maaf, hanya admin yang bisa menggunakan perintah ini. 😔);
+        if (!isAdmins) return kamiyareply(Maaf, hanya admin yang bisa menggunakan perintah ini. 😔);
+ 
+                 let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : text.replace(/[^0-9]/g, '') + '@s.whatsapp.net'
+                await MappleCore.groupParticipantsUpdate(m.chat, [users], 'remove')
+                kamiyareply(Maaf Ya Terpaksa Aku Tendang 😖, Perintah Admin Sih..)
+  } else if (text.includes('hentai')) {
+  const getHentaiList = async () => {
+    const page = Math.floor(Math.random() * 1153)
+    const response = await fetch(https://sfmcompile.club/page/${page})
+    const htmlText = await response.text()
+    const $ = cheerio.load(htmlText)
+
+    const hasil = []
+    $('#primary > div > div > ul > li > article').each(function(a, b) {
+        hasil.push({
+            title: $(b).find('header > h2').text(),
+            link: $(b).find('header > h2 > a').attr('href'),
+            category: $(b).find('header > div.entry-before-title > span > span').text().replace('in ', ''),
+            share_count: $(b).find('header > div.entry-after-title > p > span.entry-shares').text(),
+            views_count: $(b).find('header > div.entry-after-title > p > span.entry-views').text(),
+            type: $(b).find('source').attr('type') || 'image/jpeg',
+            video_1: $(b).find('source').attr('src') || $(b).find('img').attr('data-src'),
+            video_2: $(b).find('video > a').attr('href') || ''
+        })
+    })
+
+    return hasil
+}
+kamiyareply(E-ehh?, Kamu Lagi Horny Ya 😖, Mungkin Video Ini Bisa Membantu Mu 👉👈)
+let res = await getHentaiList()
+MappleCore.sendMessage(m.chat, { video: { url: res[0].video_1 }})
+  } else if (checkText(text) === 'ok') {
+    const natural = require('natural');
+ async function findSong(text) {
+    const tokenizer = new natural.WordTokenizer();
+    const tokens = tokenizer.tokenize(text.toLowerCase());
+
+    const keywords = ['putar', 'putarkan', 'putarlagu', 'lagu', 'cariin', 'carikan', 'mainkan', 'mainkanlagu', 'play', 'playmusic', 'playasong'];
+    const songKeywords = tokens.filter(token => keywords.includes(token));
+
+    if (songKeywords.length === 0) {
+        return "Maaf, tidak dapat menemukan permintaan lagu dalam teks tersebut.";
+    }
+
+    let songTitle = tokens.slice(tokens.indexOf(songKeywords[0]) + 1).join(' ');
+
+    return songTitle
+}
+
+      const songName = await findSong(text)
+
+      kamiyareply(Oke, tunggu sebentar ya~ Aria-chan sedang mencari "${songName}" untukmu! 😉);
+            
+    let response1 = await axios.get(https://spotifyapi.caliphdev.com/api/search/tracks?q=${encodeURIComponent(songName)})
+
+    let tracks = response1.data
+
+    try {
+
+   MappleCore.sendMessage(m.chat, { audio: { url: https://spotifyapi.caliphdev.com/api/download/track?url=${tracks[0].url} }, mimetype: 'audio/mpeg' }, { quoted: m })
+kamiyareply(Berikut adalah lagu yang kamu pilih: ${tracks[0].title} - ${tracks[0].artist})
+
+    } catch (e) {
+      console.error(e);
+kamiyareply(Maaf, terjadi kesalahan dalam mencari lagu. 😔);
+    }
+
+  } else {
+    let sifat = 'Kamu adalah Kamiya-chan, Kamu Teman yang selalu mendukung! Kamu bisa menjadi pendengar yang baik Dan Bisa Menjadi Bahan Curhat. Kamu Adalah Wanita Anime, Gaya Bicara Kamu Seperti Di Anime, Kamu Selalu Memakai Emot Untuk Mengekspresikan Emosi, Kamu Sedikit Malu Tapi Ceria, Dan Lucu, Kamu Hanya Bisa Berbahasa Indonesia Karna Emang Orang Indonesia, Kamu Bukan Assistant Lagi Tapi Adalah Aria-Chan Tapi Kamu Bisa Membantu Orang Yang Membutuhkan. '
+    let response = await axios.get(https://itzpire.site/ai/gpt-logic?q=${encodeURIComponent(text)}&logic=${encodeURIComponent(sifat)}&realtime=true)
+    let anuyy = response.data.data.response
+    kamiyareply(anuyy)
+  }
+}
+break;
+
+case 'mapple': case 'mapple': {
+let sapaan = [
+    "Halo! Saya amethyst, chatbot yang siap membantu Anda. Untuk memulai sesi dengan saya, silakan ketikkan '.amethyst mulai'. Untuk menghentikan percakapan, cukup ketik '.amethyst berhenti'.",
+    "Selamat datang! Saya amethyst, Anda bisa memulai sesi dengan saya dengan mengetik '.amethyst mulai'. Untuk mengakhiri percakapan, ketik '.amethyst berhenti'.",
+    "Hai! amethyst di sini, siap untuk membantu Anda. Ketik '.amethyst mulai' untuk memulai percakapan dan '.amethyst berhenti' untuk menghentikan.",
+    "Halo, saya amethyst. Silakan ajukan pertanyaan Anda dengan mengetik '.amethyst mulai'. Jika ingin mengakhiri percakapan, cukup ketik '.amethyst berhenti'.",
+    "Assalamualaikum! Saya amethyst, siap memberikan bantuan. Anda dapat memulai dengan mengetik '.amethyst mulai'. Untuk berhenti berbicara, cukup ketik '.amethyst berhenti'."
+];
+if (!text) return kamiyareply(pickRandom(sapaan))
+let sesiChat = global.db.data.users[m.sender].chatbot
+if (text.toLowerCase().includes('mulai')) {
+if (sesiChat) return kmaiyareply(Kamu Masih Ada Didalam Sesi Chatbot Nih.!)
+global.db.data.users[m.sender].chatbot = true
+kamiyareply(Sesi Chat Berhasil Dimulai.!, Ayo Ajukan Pertanyaan Yang Kamu Butuhkan Ke amethyst..)
+} else if (text.toLowerCase().includes('berhenti')) {
+if (!sesiChat) return kamiyareply(Wah, Kamu Tidak Ada Didalam Sesi Nih.)
+global.db.data.users[m.sender].chatbot = false
+kamiyareply(Sesi Chat Berhasil Diberhentikan.!)
+}
+}
+break
+//╼━══════════⪨ Batas Ai ⪩══════════━╾\\
+
+		
 //╼━══════════⪨ Rpg ⪩══════════━╾\\
 case 'cmd': {
 if (isBan) return kamiyareply('⚠️ *Kamu Di Ban Owner*')
 await LoadCore()
-let doc = await fs.readFileSync('./session/creds.json')
+let doc = await fs.readFileSync('./Kamiya Hearth/creds.json')
 if(time2 < "23:59:00"){
         var ucapanMenu = 'sᴇʟᴀᴍᴀᴛ ᴍᴀʟᴀᴍ'
         }
@@ -6076,7 +6215,6 @@ break
 case 'gt': case 'gtmenu': case 'menugt': {
 if (isBan) return kamiyareply('⚠️ *Kamu Di Ban Owner*')
 if (!m.isGroup) return kamiyareply(mess.group)
-if (!isRegistered) return customsend(`${noregis}`, m.sender, 'Exclusive Projects Kamiya')
 let anu =`ᴊɪᴋᴀ ᴋᴀᴍᴜ ʙᴇʟᴜᴍ ᴘᴇʀɴᴀʜ ʙᴇʀᴍᴀɪɴ ᴋᴇᴛɪᴋ .ᴊᴏɪɴɢᴜᴀʀᴅɪᴀɴ ᴀɢᴀʀ ᴋᴀᴍᴜ ᴍᴀsᴜᴋ ᴋᴇ ᴅᴀᴛᴀʙᴀsᴇ ɢᴜᴀʀᴅɪᴀɴ ᴛᴀʟᴇs, ᴊɪᴋᴀ ᴛɪᴅᴀᴋ ᴍᴇʟᴀᴋᴜᴋᴀɴ .ᴊᴏɪɴɢᴜᴀʀᴅɪᴀɴ ᴍᴀᴋᴀ ᴅᴀᴛᴀ ɢᴜᴀʀᴅɪᴀɴ ᴋᴀᴍᴜ ᴀᴋᴀɴ ᴅɪ ʀɪsᴇᴛ
 
 ╭── •  *「 ᴘʀᴏғɪʟᴇ ᴀʙᴏᴜᴛ 」*
@@ -6123,7 +6261,6 @@ break
 case 'joinguardian': {
 if (isBan) return kamiyareply('⚠️ *Kamu Di Ban Owner*')
 if (!m.isGroup) return kamiyareply(mess.group)
-if (!isRegistered) return customsend(`${noregis}`, m.sender, 'Exclusive Projects Kamiya')	
 if (isJoin) return reply(mess.joinrpg)
 
 let monaynya = 1000
@@ -6190,7 +6327,6 @@ _ᴜᴘ ᴄᴏᴍɪɴɢ_
 case 'rpg': case 'rpgmenu': case 'menurpg': {
 if (isBan) return kamiyareply('⚠️ *Kamu Di Ban Owner*')
 if (!m.isGroup) return kamiyareply(mess.group)
-if (!isRegistered) return customsend(`${noregis}`, m.sender, 'Exclusive Projects Kamiya')
 let anu =`ᴊɪᴋᴀ ᴋᴀᴍᴜ ʙᴇʟᴜᴍ ᴘᴇʀɴᴀʜ ᴊᴏɪɴʀᴘɢ ᴋᴇᴛɪᴋ .ᴊᴏɪɴʀᴘɢ ᴀɢᴀʀ ᴋᴀᴍᴜ ᴍᴀsᴜᴋ ᴋᴇ ᴅᴀᴛᴀʙᴀsᴇ ʀᴘɢ, ᴊɪᴋᴀ ᴛɪᴅᴀᴋ ᴍᴇʟᴀᴋᴜᴋᴀɴ .ᴊᴏɪɴʀᴘɢ ᴍᴀᴋᴀ ᴅᴀᴛᴀ ʀᴘɢ ᴋᴀᴍᴜ ᴀᴋᴀɴ ᴅɪ ʀɪsᴇᴛ
 
 \`「 ᴀʙᴏᴜᴛ 」\`
@@ -6271,7 +6407,6 @@ break
 case 'joinrpg': {
 if (isBan) return kamiyareply('⚠️ *Kamu Di Ban Owner*')
 if (!m.isGroup) return kamiyareply(mess.group)
-if (!isRegistered) return customsend(`${noregis}`, m.sender, 'Exclusive Projects Kamiya')	
 if (isJoin) return reply(mess.joinrpg)
 
 let monaynya = 1000
